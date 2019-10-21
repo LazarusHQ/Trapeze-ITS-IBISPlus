@@ -1,0 +1,366 @@
+'----------------------
+'	Trigger
+'----------------------
+
+{trigger:IBIS_setLinie}
+	(L.L.elec_busbar_main)
+	{if}
+		0 (S.L.IBIS_input) (S.L.IBIS_input_count)
+		"" (S.$.IBIS_GetLinieInput)
+		1 (S.L.IBIS_GetInputState)
+		(T.L.ev_IBIS_piep)
+	{endif}
+{end}
+
+{trigger:IBIS_setRoute}
+	(L.L.elec_busbar_main)
+	{if}
+		0 (S.L.IBIS_input) (S.L.IBIS_input_count)
+		"" (S.$.IBIS_GetRouteInput)
+		2 (S.L.IBIS_GetInputState)
+		(T.L.ev_IBIS_piep)
+	{endif}
+{end}
+
+{trigger:IBIS_setDriver}
+	(L.L.elec_busbar_main)
+	{if}
+		0 (S.L.IBIS_input) (S.L.IBIS_input_count)
+		3 (S.L.IBIS_GetInputState)
+		(T.L.ev_IBIS_piep)
+	{endif}
+{end}
+
+{trigger:Numpad_Enter}
+	(L.L.IBIS_GetInputState) 1 =
+	{if}
+		(T.L.ev_IBIS_piep)
+		(L.L.IBIS_input) s0 (S.L.IBIS_Linie_Complex)
+		l0 0 =
+		{if}
+			(T.L.ev_IBIS_pieperror)
+		{endif}
+
+		l0 100 / trunc 
+		
+		(S.L.IBIS_LinieKurs)
+
+		l0 100 % 
+		
+		(S.L.IBIS_Linie_Suffix)
+
+		(T.L.ev_IBIS_entwerter)
+		(M.L.IBIS_SetLinie)
+	{else}
+		(L.L.IBIS_GetInputState) 2 =
+		{if}
+			(L.L.IBIS_input) s0 (S.L.IBIS_Route)
+			0 =
+			{if}
+				-1 (S.L.IBIS_RouteIndex)
+				0 (S.L.IBIS_Route) (S.L.IBIS_Route_wechsel)
+				0 (S.L.IBIS_busstop_index)
+				"" (S.$.IBIS_cabindisplay)
+				0 (S.L.IBIS_busstop)
+				"" (S.$.act_busstop)
+				"" (S.$.IBIS)
+				"" (S.$.IBIS_busstop_name)
+				0 (S.L.IBIS_GetInputState)
+				"" (S.$.Haltestelle)
+			{else}
+				(L.L.IBIS_LinieKurs) 100 * l0 + (M.V.GetRouteIndex) s1
+				0 <
+				{if}
+					4 (S.L.IBIS_GetInputState)
+					(T.L.ev_IBIS_pieperror)
+				{else}
+					(T.L.ev_IBIS_piep)
+					(M.L.IBIS_SetRoute)
+					(L.L.schedule_active)
+					{if}
+						(L.L.IBIS_Busstop_differenz)
+						{if}
+							(M.V.GetTTBusstopIndex) 1 - 0 max (S.L.IBIS_busstop)
+						{else}
+							(M.V.GetTTBusstopIndex) 0 max (S.L.IBIS_busstop)
+						{endif}
+					{endif}
+				{else}
+					0 (S.L.IBIS_busstop)
+				{endif}
+				(M.L.IBIS_RefreshBusstop)
+			{endif}
+		{endif}	
+		(L.L.IBIS_GetInputState) 4 =
+		{if}
+			0 (S.L.IBIS_GetInputState)
+			(T.L.ev_IBIS_piep)
+		{else}
+		(L.L.IBIS_GetInputState) 15 =
+		{if}
+			(L.L.IBIS_busstop) 1 + (S.L.IBIS_busstop)
+			(M.L.IBIS_RefreshBusstop)
+			(T.L.ev_IBIS_piep)
+			0 (S.L.IBIS_LCD-zeilentimer) (S.L.IBIS_LCD-zeile)
+			11 (S.L.IBIS_GetInputState)
+		{endif}
+		{endif}
+	{endif}
+{end}
+
+{trigger:Numpad_1}
+	1 (M.L.IBIS_Keypad)
+	(L.L.IBIS_GetInputState) 1 = 
+	{if}
+		(L.$.IBIS_GetLinieInput) "1" $+ (S.$.IBIS_GetLinieInput)
+	{else}
+	 	(L.L.IBIS_GetInputState) 2 =
+		{if}
+			(L.$.IBIS_GetRouteInput) "1" $+ (S.$.IBIS_GetRouteInput)
+		{endif}
+	{endif}
+{end}
+
+{trigger:Numpad_2}
+	2 (M.L.IBIS_Keypad)
+	(L.L.IBIS_GetInputState) 1 = 
+	{if}
+		(L.$.IBIS_GetLinieInput) "2" $+ (S.$.IBIS_GetLinieInput)
+	{else}
+	 	(L.L.IBIS_GetInputState) 2 =
+		 {if}
+		 	(L.$.IBIS_GetRouteInput) "2" $+ (S.$.IBIS_GetRouteInput)
+		 {endif}
+	{endif}
+{end}
+
+{trigger:Numpad_3}
+	3 (M.L.IBIS_Keypad)
+	(L.L.IBIS_GetInputState) 1 = 
+	{if}
+		(L.$.IBIS_GetLinieInput) "3" $+ (S.$.IBIS_GetLinieInput)
+	 {else}
+	 	(L.L.IBIS_GetInputState) 2 =
+		 {if}
+		 	(L.$.IBIS_GetRouteInput) "3" $+ (S.$.IBIS_GetRouteInput)
+		 {endif}
+	{endif}
+{end}
+
+{trigger:Numpad_4}
+	4 (M.L.IBIS_Keypad)
+	(L.L.IBIS_GetInputState) 1 = 
+	{if}
+		(L.$.IBIS_GetLinieInput) "4" $+ (S.$.IBIS_GetLinieInput)
+	{else}
+	 	(L.L.IBIS_GetInputState) 2 =
+		 {if}
+		 	(L.$.IBIS_GetRouteInput) "4" $+ (S.$.IBIS_GetRouteInput)
+		 {endif}
+	{endif}
+{end}
+
+{trigger:Numpad_5}
+	5 (M.L.IBIS_Keypad)
+	(L.L.IBIS_GetInputState) 1 = 
+	{if}
+		(L.$.IBIS_GetLinieInput) "5" $+ (S.$.IBIS_GetLinieInput)
+	{else}
+	 	(L.L.IBIS_GetInputState) 2 =
+		 {if}
+		 	(L.$.IBIS_GetRouteInput) "5" $+ (S.$.IBIS_GetRouteInput)
+		 {endif}
+	{endif}
+{end}
+
+{trigger:Numpad_6}
+	6 (M.L.IBIS_Keypad)
+	(L.L.IBIS_GetInputState) 1 = 
+	{if}
+		(L.$.IBIS_GetLinieInput) "6" $+ (S.$.IBIS_GetLinieInput)
+	{else}
+	 	(L.L.IBIS_GetInputState) 2 =
+		 {if}
+		 	(L.$.IBIS_GetRouteInput) "6" $+ (S.$.IBIS_GetRouteInput)
+		 {endif}
+	{endif}
+{end}
+
+{trigger:Numpad_7}
+	7 (M.L.IBIS_Keypad)
+	(L.L.IBIS_GetInputState) 1 = 
+	{if}
+		(L.$.IBIS_GetLinieInput) "7" $+ (S.$.IBIS_GetLinieInput)
+	{else}
+	 	(L.L.IBIS_GetInputState) 2 =
+		 {if}
+		 	(L.$.IBIS_GetRouteInput) "7" $+ (S.$.IBIS_GetRouteInput)
+		 {endif}
+	{endif}
+{end}
+
+{trigger:Numpad_8}
+	8 (M.L.IBIS_Keypad)
+	(L.L.IBIS_GetInputState) 1 = 
+	{if}
+		(L.$.IBIS_GetLinieInput) "8" $+ (S.$.IBIS_GetLinieInput)
+	{else}
+	 	(L.L.IBIS_GetInputState) 2 =
+		 {if}
+		 	(L.$.IBIS_GetRouteInput) "8" $+ (S.$.IBIS_GetRouteInput)
+		 {endif}
+	{endif}
+{end}
+
+{trigger:Numpad_9}
+	9 (M.L.IBIS_Keypad)
+	(L.L.IBIS_GetInputState) 1 = 
+	{if}
+		(L.$.IBIS_GetLinieInput) "9" $+ (S.$.IBIS_GetLinieInput)
+	{else}
+	 	(L.L.IBIS_GetInputState) 2 =
+		 {if}
+		 	(L.$.IBIS_GetRouteInput) "9" $+ (S.$.IBIS_GetRouteInput)
+		 {endif}
+	{endif}
+{end}
+
+{trigger:Numpad_0}
+	0 (M.L.IBIS_Keypad)
+	(L.L.IBIS_GetInputState) 1 = 
+	{if}
+		(L.$.IBIS_GetLinieInput) "0" $+ (S.$.IBIS_GetLinieInput)
+	{else}
+	 	(L.L.IBIS_GetInputState) 2 =
+		 {if}
+		 	(L.$.IBIS_GetRouteInput) "0" $+ (S.$.IBIS_GetRouteInput)
+		 {endif}
+	{endif}
+{end}
+
+'----------------------
+'	Init
+'----------------------
+
+{macro:Trapeze_init}
+	"" (S.$.IBIS_Complex_Line)
+	-1 (S.L.IBIS_RouteIndex)
+{end}
+
+'----------------------
+'	Frame
+'----------------------
+
+{macro:Trapeze_frame}
+
+	(L.L.IBIS_GetInputState) 8 =
+	{if}
+		(L.$.IBIS_terminus_name) 20 $SetLengthL
+	{endif}
+
+	1 (S.L.Refresh_Strings)	
+{end}
+
+{macro:IBIS_RefreshBusstop}
+	(L.L.IBIS_RouteIndex) 0 <
+	{if}
+		"" (S.$.act_busstop)
+	{else}
+		(L.L.IBIS_RouteIndex) (M.V.GetBusstopCount) (L.L.IBIS_busstop) <=
+		{if}
+			0 (S.L.IBIS_busstop) (S.L.IBIS_abfahrt_triggered)
+
+			(L.L.IBIS_Route) s5
+			1.5 <
+			{if}
+				2 s6
+			{else}
+				l5 2.5 <
+				{if}
+					1 s6
+				{endif}
+			{endif}
+
+			(L.L.IBIS_LinieKurs) 100 * l6 + (M.V.GetRouteIndex) s1
+			0 >=
+			{if}
+				(M.L.IBIS_SetRoute)
+				l6 (S.L.IBIS_Route)
+			{endif}
+			{else}
+				0 (S.L.IBIS_GetInputState)
+		{endif}
+	{endif}
+
+	(L.L.IBIS_RouteIndex) (L.L.IBIS_busstop) (M.V.GetRouteBusstopIdent) (S.$.act_busstop)
+	(M.V.GetBusstopIndex) (S.L.IBIS_busstop_index)
+
+	(L.L.IBIS_busstop_index) 3 (M.V.GetBusstopString)
+	(S.$.IBIS_busstop_name)
+{end}
+
+{macro:IBIS_Keypad}
+	s0
+	(L.L.elec_busbar_main)
+	{if}
+		(L.L.IBIS_GetInputState) 1 = (L.L.IBIS_input_count) 5 < &&
+		(L.L.IBIS_GetInputState) 2 = (L.L.IBIS_input_count) 2 < && ||
+		{if}
+			(L.L.IBIS_input) 10 * l0 + (S.L.IBIS_input)
+			(L.L.IBIS_input_count) 1 + (S.L.IBIS_input_count)
+			(T.L.ev_IBIS_piep)
+		{else}
+			l0 0 =
+			{if}
+				(T.L.ev_stoermeldung)
+			{endif}
+		{endif}
+		0 (S.L.IBIS_modetimer)
+	{endif}
+{end}
+
+{macro:IBIS_SetRoute}
+	l1 (S.L.IBIS_RouteIndex)
+	(M.V.GetRouteTerminusIndex) (S.L.IBIS_TerminusIndex)
+	(M.V.GetTerminusCode) (S.L.IBIS_TerminusCode)
+	(M.L.IBIS_RefreshTerminusText)
+	0 (S.L.IBIS_modetimer)
+	8 (S.L.IBIS_GetInputState)
+
+	(L.L.IBIS_LinieKurs) s2 100 / trunc s3
+	l3 5 =
+	{if}
+		l2 100 * 5 (M.V.GetDepotStringGlobal) $StrToFloat 0 max (S.L.IBIS_Linie_Suffix) + (S.L.IBIS_Linie_Complex)
+	{endif}
+	l3 8 =
+	{if}
+		l2 100 * 4 (M.V.GetDepotStringGlobal) $StrToFloat 0 max (S.L.IBIS_Linie_Suffix) + (S.L.IBIS_Linie_Complex)
+	{endif}
+	l3 9 =
+	{if}
+		l2 100 * 3 (M.V.GetDepotStringGlobal) $StrToFloat 0 max (S.L.IBIS_Linie_Suffix) + (S.L.IBIS_Linie_Complex)
+	{endif}
+	(M.L.IBIS_SetLinie)
+	(L.L.IBIS_LinieKurs) 100 * (L.L.IBIS_RouteIndex) + 10000 * sin 10 * 15 + trunc (S.L.IBIS_busstop_offset)
+{end}
+
+{macro:IBIS_RefreshTerminusText}
+	(L.L.IBIS_TerminusIndex) 5 (M.V.GetTerminusString) (S.$.IBIS_terminus_name)
+{end}
+
+{macro:IBIS_SetLinie}
+	(L.L.IBIS_LinieKurs) s0 0 = !
+	{if}
+		l0 "03" $IntToStrEnh
+	{else}
+		"000"
+	{endif}
+
+	(L.L.IBIS_Linie_Suffix) s0 0 = !
+	{if}
+		l0 "02" $IntToStrEnh $+
+	{else}
+		"00" $+
+	{endif}
+	(S.$.IBIS_Complex_Line)
+{end}
