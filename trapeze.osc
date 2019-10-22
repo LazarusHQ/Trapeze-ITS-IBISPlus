@@ -85,6 +85,7 @@
 					0 (S.L.IBIS_busstop)	
 				{endif}
 					(M.L.IBIS_RefreshBusstop)
+					0 (S.L.IBIS_modetimer) (S.L.IBIS_abfahrt_triggered) (S.L.IBIS_Route_wechsel)
 			{endif}
 		{else}
 			(L.L.IBIS_GetInputState) 3 =
@@ -337,6 +338,8 @@
 {macro:Trapeze_init}
 	"" (S.$.IBIS_Complex_Line)
 	-1 (S.L.IBIS_RouteIndex)
+	"" (S.$.IBIS_cabindisplay)
+	0 (S.L.IBIS_busstop_index)
 {end}
 
 '----------------------
@@ -344,6 +347,23 @@
 '----------------------
 
 {macro:Trapeze_frame}
+
+(L.L.IBIS_energy_last) !
+	{if}
+		0 (S.L.IBIS_input) (S.L.IBIS_input_count)
+		0 (S.L.IBIS_modetimer)
+		(T.L.ev_IBIS-startupsound)
+		(L.L.IBIS_LinieKurs) 0 =
+		(L.L.IBIS_Route) 0 = &&
+		(L.L.IBIS_TerminusCode) 0 = &&
+		{if}
+			1 (S.L.IBIS_mode)
+		{else}
+			0 (S.L.IBIS_mode)
+			(L.L.IBIS_TerminusCode) (M.V.GetTerminusIndex) (S.L.IBIS_TerminusIndex)
+			(M.L.IBIS_RefreshTerminusText)
+		{endif}
+	{endif}
 
 	(L.L.elec_busbar_main) 
 	(L.L.IBIS_Fahrbetrieb) ! &&
@@ -358,11 +378,137 @@
 
 	(L.L.IBIS_GetInputState) 8 =
 	{if}
-		(L.$.IBIS_terminus_name) 20 $SetLengthL
+		" "
+		(L.L.IBIS_changetimer) (L.S.Timegap) + 2 min (S.L.IBIS_changetimer)
+		2 =
+		{if}
+			13 (S.L.IBIS_GetInputState)
+			0 (S.L.IBIS_changetimer)
+		{endif}
+	{else}
+		(L.L.IBIS_GetInputState) 13 =
+		{if}
+			"@"
+		"   " $+ (L.$.IBIS_terminus_name) 20 $SetLengthL $+
+		{endif}
 	{endif}
 
 	1 (S.L.Refresh_Strings)	
+
+	(L.L.schedule_active)
+	{if}	
+		(L.L.IBIS_Route) 0 = 
+		{if}
+			"" (S.$.IBIS_getRoute) (S.$.IBIS_getRoute1) (S.$.IBIS_getRoute2) (S.$.IBIS_getRoute3)
+		{else}
+			0 (M.V.GetTTBusstopName)
+			1 (M.V.GetTTBusstopName)
+			$=
+			{if}
+				-1 s1
+			{else}
+				0 s1
+			{endif}
+			(M.V.GetTTBusstopIndex) l1 + s0 (S.L.IBIS_busstop_index)
+
+			(M.V.GetTTBusstopCount) 1 - l1 + s2
+			
+			l0 l2 <=
+			{if}
+				(L.L.IBIS_RouteIndex) l0 (L.L.IBIS_korr) + (M.V.GetRouteBusstopIdent) (M.V.GetBusstopIndex) 3 (M.V.GetBusstopString) (S.$.IBIS_getRoute)
+			{else}
+				"" (S.$.IBIS_getRoute)
+			{endif}
+
+			l0 1 + l2 <=
+			{if}
+				(L.L.IBIS_RouteIndex) l0 1 + (L.L.IBIS_korr) + (M.V.GetRouteBusstopIdent) (M.V.GetBusstopIndex) 3 (M.V.GetBusstopString) (S.$.IBIS_getRoute1)
+			{else}
+				"" (S.$.IBIS_getRoute1)
+			{endif}
+
+			l0 2 + l2 <=
+			{if}
+				(L.L.IBIS_RouteIndex) l0 2 + (L.L.IBIS_korr) + (M.V.GetRouteBusstopIdent) (M.V.GetBusstopIndex) 3 (M.V.GetBusstopString) (S.$.IBIS_getRoute2)
+			{else}
+				"" (S.$.IBIS_getRoute2)
+			{endif}
+
+			l0 3 + l2 <=
+			{if}
+				(L.L.IBIS_RouteIndex) l0 3 + (L.L.IBIS_korr) + (M.V.GetRouteBusstopIdent) (M.V.GetBusstopIndex) 3 (M.V.GetBusstopString) (S.$.IBIS_getRoute3)
+			{else}
+				"" (S.$.IBIS_getRoute3)
+			{endif}
+			
+			(L.$.IBIS_terminus_name) 20 $SetLengthL (S.$.IBIS_getTarget)
+		{endif}
+	{endif}
+
+	(L.L.Snd_Microphone) (L.L.IBIS_LastMicro) ! &&
+	{if}
+		(L.L.IBIS_busstop) 1 + (S.L.IBIS_busstop)
+		(M.L.IBIS_RefreshBusstop)
+		(M.L.IBIS_PlayAnnouncement)
+
+'		Nullsetzen des Timers f�r den Zeilenwechsel der LCD-Innenanzeige
+		0 (S.L.IBIS_LCD-zeilentimer) (S.L.IBIS_LCD-zeile)
+		(M.L.IBIS_LCD-refresh)
+	{endif}
+	(L.L.Snd_Microphone) (S.L.IBIS_LastMicro)
+
+	(L.L.elec_busbar_main) (S.L.IBIS_energy_last)
+
+	(L.L.IBIS_LCD-zeilentimer) (L.S.Timegap) + (S.L.IBIS_LCD-zeilentimer)
+
+	(L.L.door_0) 0 >
+	(L.L.door_1) 0 > ||
+	(L.L.door_2) 0 > ||
+	(L.L.door_3) 0 > ||
+	(L.L.door_4) 0 > ||
+	(L.L.door_5) 0 > ||
+	{if}
+		0 (S.L.IBIS_LCD-zeilentimer)
+		1 (S.L.IBIS_LCD-zeile)
+		(M.L.IBIS_LCD-refresh)
+	{endif}
+
+	(L.L.IBIS_LCD-zeilentimer) 4 >
+	(L.L.elec_busbar_main) &&
+	{if}
+		(L.L.IBIS_LCD-zeile) ! (S.L.IBIS_LCD-zeile)
+		0 (S.L.IBIS_LCD-zeilentimer)
+		(M.L.IBIS_LCD-refresh)
+	{endif}
+
+	(L.L.door_0) 0 >
+	(L.L.door_1) 0 > ||
+	(L.L.door_2) 0 > ||
+	(L.L.door_3) 0 > ||
+	(L.L.door_4) 0 > ||
+	(L.L.door_5) 0 > ||
+	{if}
+		1 (S.L.IBIS_Weiterschaltung_aktiv)
+		(L.L.kmcounter_m) (S.L.IBIS_Weiterschaltungsdistanz)
+	{endif}
+
+	(L.L.kmcounter_m) (L.L.IBIS_Weiterschaltungsdistanz) - 50 >= 
+	(L.L.IBIS_Weiterschaltung_aktiv) &&
+	(L.L.elec_busbar_main) 0 > &&
+	{if}
+		(L.L.IBIS_busstop) 1 + (S.L.IBIS_busstop)
+		(M.L.IBIS_RefreshBusstop)
+		(M.L.IBIS_PlayAnnouncement)
+		0 (S.L.IBIS_LCD-zeilentimer) (S.L.IBIS_LCD-zeile)
+		(M.L.IBIS_LCD-refresh)
+		0 (S.L.IBIS_Weiterschaltung_aktiv)
+	{endif}
+
 {end}
+
+'----------------------
+'	Macros
+'----------------------
 
 {macro:IBIS_RefreshBusstop}
 	(L.L.IBIS_RouteIndex) 0 <
@@ -419,6 +565,60 @@
 			{endif}
 		{endif}
 		0 (S.L.IBIS_modetimer)
+	{endif}
+{end}
+
+{macro:IBIS_PlayAnnouncement}
+	(L.L.IBIS_busstop) 0 >
+	{if}
+
+		"..\..\Announcements\" 0 (M.V.GetDepotStringGlobal) "\" $+ $+ (L.$.act_busstop) $+ $msg
+
+		(L.L.IBIS_RouteIndex) (M.V.GetBusstopCount) 1 - (L.L.IBIS_busstop) <=
+		{if}
+			"_#terminus" $+
+		{endif}
+
+		".wav" $+
+		(T.F.ev_IBIS_Ansagen)
+	{endif}
+{end}
+
+{macro:IBIS_LCD-refresh}
+
+'Formatierung der D92-Innenanzeige
+
+	(L.L.door_0) 0 >
+	(L.L.door_1) 0 > ||
+	(L.L.door_2) 0 > ||
+	(L.L.door_3) 0 > ||
+	(L.L.door_4) 0 > ||
+	(L.L.door_5) 0 > ||
+	{if}
+		(L.L.IBIS_RouteIndex) 0 >=
+		{if}
+			(L.L.IBIS_LCD-zeile) 
+			(L.L.IBIS_Linie_Complex) 100 / trunc $IntToStr " " $+ (L.$.IBIS_terminus_name) 20 $SetLengthL $+
+			(S.$.IBIS_cabindisplay)
+		{endif}
+	{else}
+		(L.L.IBIS_LCD-zeile) 1 = 
+		(L.L.IBIS_busstop_index) 2 (M.V.GetBusstopString) $length 0 > &&
+		{if}
+			(L.L.IBIS_RouteIndex) 0 >=
+			{if}
+				(L.L.IBIS_LCD-zeile) 
+				(L.L.IBIS_busstop_index) 2 (M.V.GetBusstopString)
+				(S.$.IBIS_cabindisplay)
+			{endif}
+		{else}
+			(L.L.IBIS_RouteIndex) 0 >=
+			{if}
+				(L.L.IBIS_LCD-zeile) 
+				(L.L.IBIS_busstop_index) 1 (M.V.GetBusstopString) 
+				(S.$.IBIS_cabindisplay)
+			{endif}
+		{endif}
 	{endif}
 {end}
 
