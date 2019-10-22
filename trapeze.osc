@@ -1,3 +1,13 @@
+'------------------------------
+'	Trapeze ITS IBISPlus Script
+'	(c) 2019 - Marcel Kuhnt, Rüdiger Hülsmann, Markus Rabe, Morphi,
+'			   SETRA315_HAv, Leerfahrt, Stapellurch 
+'
+'	Script Version: 2.0
+'	OMSI Release: 2.0
+'	Trapeze ITS IBISPlus Version: 1.0 
+'-------------------------------
+
 '----------------------
 '	Trigger
 '----------------------
@@ -504,6 +514,81 @@
 		0 (S.L.IBIS_Weiterschaltung_aktiv)
 	{endif}
 
+
+'	'+/- oder *?
+
+	(L.L.elec_busbar_main)
+	(M.V.GetTTDelay) -200 < &&
+	{if}
+		1 (S.L.IBIS_DelayState)
+	{endif}
+
+	(L.L.elec_busbar_main)
+	(M.V.GetTTDelay) 0 = &&
+	{if}
+		0 (S.L.IBIS_DelayState)
+	{endif}
+
+'Anzeigen der aktuellen Fahrplanlage:
+
+	(L.L.elec_busbar_main)
+	{if}
+		""
+		(M.V.GetTTDelay) s1 60 / s0
+
+'		Minuten:
+		l0 abs trunc " 2" $IntToStrEnh $+  
+		(S.$.IBIS_Delay_min)
+
+'		Zehntelminuten:
+		l0 abs l0 abs trunc - 2 * s2
+		l2 1 >=
+		{if}
+			"50"
+		{else}
+			"00"
+		{endif}
+		(S.$.IBIS_Delay_sec)
+
+		l1 abs 6 >=
+		{if}
+			l0 0 >
+			{if}
+				"-"
+			{else}
+				"+"
+			{endif}
+		{else}
+			" "
+		{endif}
+		(S.$.IBIS_Delay_state)
+	{else}
+		"" (S.$.IBIS_Delay_min) (S.$.IBIS_Delay_sec) (S.$.IBIS_Delay_state)
+	{endif}
+
+	(L.L.IBIS_DelayState) 1 =
+	{if}
+		(M.V.GetTTDelay) -590 < 
+		{if}	
+			"+" (L.$.IBIS_Delay_min) $+ (S.$.IBIS_getDelay)
+		{else}
+			"+" (L.$.IBIS_Delay_min) $+ ":" $+ (L.$.IBIS_Delay_sec) $+ (S.$.IBIS_getDelay)
+		{endif}
+	{else}
+		(M.V.GetTTDelay) 590 >
+		{if}	
+			(L.$.IBIS_Delay_state) (L.$.IBIS_Delay_min) $+ (S.$.IBIS_getDelay)
+		{else}
+			(L.$.IBIS_Delay_state) (L.$.IBIS_Delay_min) $+ ":" $+ (L.$.IBIS_Delay_sec) $+ (S.$.IBIS_getDelay)
+		{endif}
+	{endif}
+
+	(L.L.IBIS_DelayState) 1 =
+	(M.V.GetTTDelay) -5 = &&
+	{if}
+		(T.L.ev_Abfahrtsignal)
+	{endif}
+
 {end}
 
 '----------------------
@@ -585,9 +670,6 @@
 {end}
 
 {macro:IBIS_LCD-refresh}
-
-'Formatierung der D92-Innenanzeige
-
 	(L.L.door_0) 0 >
 	(L.L.door_1) 0 > ||
 	(L.L.door_2) 0 > ||
