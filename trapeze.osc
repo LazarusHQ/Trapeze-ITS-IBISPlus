@@ -43,11 +43,11 @@
 		{endif}
 
 		l0 100 / trunc 
-		
+
 		(S.L.IBIS_LinieKurs)
 
 		l0 100 % 
-		
+
 		(S.L.IBIS_Linie_Suffix)
 
 		(T.L.ev_IBIS_entwerter)
@@ -92,254 +92,231 @@
 				(M.L.IBIS_RefreshBusstop)
 			{endif}
 		{endif}	
-		(L.L.IBIS_GetInputState) 3 =
-		{if}
-			(L.$.IBIS_GetDriverInput) $StrToFloat (C.L.fahrer) =
-			{if}
-				1 (S.L.IBIS_Fahrbetrieb)
-				(T.L.ev_IBIS_piep)
-			{else}
-				"" (S.$.IBIS_GetDriverInput)
-				(T.L.ev_IBIS_pieperror)
-			{endif}
-		{else}
 		(L.L.IBIS_GetInputState) 4 =
 		{if}
 			0 (S.L.IBIS_GetInputState)
 			(T.L.ev_IBIS_piep)
+		{else}
+		(L.L.IBIS_GetInputState) 15 =
+		{if}
+			(L.L.IBIS_busstop) 1 + (S.L.IBIS_busstop)
+			(M.L.IBIS_RefreshBusstop)
+			(T.L.ev_IBIS_piep)
+			0 (S.L.IBIS_LCD-zeilentimer) (S.L.IBIS_LCD-zeile)
+			11 (S.L.IBIS_GetInputState)
 		{endif}
 		{endif}
 	{endif}
 {end}
 
 {trigger:Numpad_1}
-	(L.L.IBIS_GetInputState) 1 = 
-	(L.L.IBIS_GetInputState) 2 = ||
+	(L.L.IBIS_GetInputState) 3 = !
 	{if}
 		1 (M.L.IBIS_Keypad)
-		(L.L.IBIS_GetInputState) 1 = 
-		{if}
-			(L.$.IBIS_GetLinieInput) "1" $+ (S.$.IBIS_GetLinieInput)
-		{else}
-	 		(L.L.IBIS_GetInputState) 2 =
+	{endif}
+	(L.L.IBIS_GetInputState) 1 = 
+	{if}
+		(L.$.IBIS_GetLinieInput) "1" $+ (S.$.IBIS_GetLinieInput)
+	{else}
+	 	(L.L.IBIS_GetInputState) 2 =
 		{if}
 			(L.$.IBIS_GetRouteInput) "1" $+ (S.$.IBIS_GetRouteInput)
+		{else}
+			(L.L.IBIS_GetInputState) 3 =
+			{if}
+				(L.$.IBIS_GetDriverInput) "1" $+ (S.$.IBIS_GetDriverInput)
+			{endif}
 		{endif}
 	{endif}
-	{else}
-		(L.L.IBIS_GetInputState) 3 =
-		{if}
-			(T.L.ev_IBIS_piep)
-			(L.$.IBIS_GetDriverInput) "1" $+ (S.$.IBIS_GetDriverInput)
-		{endif}
-	{endif} 
 {end}
 
 {trigger:Numpad_2}
-	(L.L.IBIS_GetInputState) 1 = 
-	(L.L.IBIS_GetInputState) 2 = ||
+	(L.L.IBIS_GetInputState) 3 = !
 	{if}
 		2 (M.L.IBIS_Keypad)
-		(L.L.IBIS_GetInputState) 1 = 
-		{if}
-			(L.$.IBIS_GetLinieInput) "2" $+ (S.$.IBIS_GetLinieInput)
-		{else}
-	 		(L.L.IBIS_GetInputState) 2 =
+	{endif}
+	(L.L.IBIS_GetInputState) 1 = 
+	{if}
+		(L.$.IBIS_GetLinieInput) "2" $+ (S.$.IBIS_GetLinieInput)
+	{else}
+	 	(L.L.IBIS_GetInputState) 2 =
 		{if}
 			(L.$.IBIS_GetRouteInput) "2" $+ (S.$.IBIS_GetRouteInput)
+		{else}
+			(L.L.IBIS_GetInputState) 3 =
+			{if}
+				(L.$.IBIS_GetDriverInput) "2" $+ (S.$.IBIS_GetDriverInput)
+			{endif}
 		{endif}
 	{endif}
-	{else}
-		(L.L.IBIS_GetInputState) 3 =
-		{if}
-			(T.L.ev_IBIS_piep)
-			(L.$.IBIS_GetDriverInput) "2" $+ (S.$.IBIS_GetDriverInput)
-		{endif}
-	{endif} 
 {end}
 
 {trigger:Numpad_3}
-	(L.L.IBIS_GetInputState) 1 = 
-	(L.L.IBIS_GetInputState) 2 = ||
+	(L.L.IBIS_GetInputState) 3 = !
 	{if}
 		3 (M.L.IBIS_Keypad)
-		(L.L.IBIS_GetInputState) 1 = 
-		{if}
-			(L.$.IBIS_GetLinieInput) "3" $+ (S.$.IBIS_GetLinieInput)
-		{else}
-	 		(L.L.IBIS_GetInputState) 2 =
+	{endif}
+	(L.L.IBIS_GetInputState) 1 = 
+	{if}
+		(L.$.IBIS_GetLinieInput) "3" $+ (S.$.IBIS_GetLinieInput)
+	{else}
+	 	(L.L.IBIS_GetInputState) 2 =
 		{if}
 			(L.$.IBIS_GetRouteInput) "3" $+ (S.$.IBIS_GetRouteInput)
+		{else}
+			(L.L.IBIS_GetInputState) 3 =
+			{if}
+				(L.$.IBIS_GetDriverInput) "3" $+ (S.$.IBIS_GetDriverInput)
+			{endif}
 		{endif}
 	{endif}
-	{else}
-		(L.L.IBIS_GetInputState) 3 =
-		{if}
-			(T.L.ev_IBIS_piep)
-			(L.$.IBIS_GetDriverInput) "3" $+ (S.$.IBIS_GetDriverInput)
-		{endif}
-	{endif} 
 {end}
 
 {trigger:Numpad_4}
-	(L.L.IBIS_GetInputState) 1 = 
-	(L.L.IBIS_GetInputState) 2 = ||
+	(L.L.IBIS_GetInputState) 3 = !
 	{if}
 		4 (M.L.IBIS_Keypad)
-		(L.L.IBIS_GetInputState) 1 = 
-		{if}
-			(L.$.IBIS_GetLinieInput) "4" $+ (S.$.IBIS_GetLinieInput)
-		{else}
-	 		(L.L.IBIS_GetInputState) 2 =
+	{endif}
+	(L.L.IBIS_GetInputState) 1 = 
+	{if}
+		(L.$.IBIS_GetLinieInput) "4" $+ (S.$.IBIS_GetLinieInput)
+	{else}
+	 	(L.L.IBIS_GetInputState) 2 =
 		{if}
 			(L.$.IBIS_GetRouteInput) "4" $+ (S.$.IBIS_GetRouteInput)
+		{else}
+			(L.L.IBIS_GetInputState) 3 =
+			{if}
+				(L.$.IBIS_GetDriverInput) "4" $+ (S.$.IBIS_GetDriverInput)
+			{endif}
 		{endif}
 	{endif}
-	{else}
-		(L.L.IBIS_GetInputState) 3 =
-		{if}
-			(T.L.ev_IBIS_piep)
-			(L.$.IBIS_GetDriverInput) "4" $+ (S.$.IBIS_GetDriverInput)
-		{endif}
-	{endif} 
 {end}
 
 {trigger:Numpad_5}
-	(L.L.IBIS_GetInputState) 1 = 
-	(L.L.IBIS_GetInputState) 2 = ||
+	(L.L.IBIS_GetInputState) 3 = !
 	{if}
 		5 (M.L.IBIS_Keypad)
-		(L.L.IBIS_GetInputState) 1 = 
-		{if}
-			(L.$.IBIS_GetLinieInput) "5" $+ (S.$.IBIS_GetLinieInput)
-		{else}
-	 		(L.L.IBIS_GetInputState) 2 =
+	{endif}
+	(L.L.IBIS_GetInputState) 1 = 
+	{if}
+		(L.$.IBIS_GetLinieInput) "5" $+ (S.$.IBIS_GetLinieInput)
+	{else}
+	 	(L.L.IBIS_GetInputState) 2 =
 		{if}
 			(L.$.IBIS_GetRouteInput) "5" $+ (S.$.IBIS_GetRouteInput)
+		{else}
+			(L.L.IBIS_GetInputState) 3 =
+			{if}
+				(L.$.IBIS_GetDriverInput) "5" $+ (S.$.IBIS_GetDriverInput)
+			{endif}
 		{endif}
 	{endif}
-	{else}
-		(L.L.IBIS_GetInputState) 3 =
-		{if}
-			(T.L.ev_IBIS_piep)
-			(L.$.IBIS_GetDriverInput) "5" $+ (S.$.IBIS_GetDriverInput)
-		{endif}
-	{endif} 
 {end}
 
 {trigger:Numpad_6}
-	(L.L.IBIS_GetInputState) 1 = 
-	(L.L.IBIS_GetInputState) 2 = ||
+	(L.L.IBIS_GetInputState) 3 = !
 	{if}
 		6 (M.L.IBIS_Keypad)
-		(L.L.IBIS_GetInputState) 1 = 
-		{if}
-			(L.$.IBIS_GetLinieInput) "6" $+ (S.$.IBIS_GetLinieInput)
-		{else}
-	 		(L.L.IBIS_GetInputState) 2 =
+	{endif}
+	(L.L.IBIS_GetInputState) 1 = 
+	{if}
+		(L.$.IBIS_GetLinieInput) "6" $+ (S.$.IBIS_GetLinieInput)
+	{else}
+	 	(L.L.IBIS_GetInputState) 2 =
 		{if}
 			(L.$.IBIS_GetRouteInput) "6" $+ (S.$.IBIS_GetRouteInput)
+		{else}
+			(L.L.IBIS_GetInputState) 3 =
+			{if}
+				(L.$.IBIS_GetDriverInput) "6" $+ (S.$.IBIS_GetDriverInput)
+			{endif}
 		{endif}
 	{endif}
-	{else}
-		(L.L.IBIS_GetInputState) 3 =
-		{if}
-			(T.L.ev_IBIS_piep)
-			(L.$.IBIS_GetDriverInput) "6" $+ (S.$.IBIS_GetDriverInput)
-		{endif}
-	{endif} 
 {end}
 
 {trigger:Numpad_7}
-	(L.L.IBIS_GetInputState) 1 = 
-	(L.L.IBIS_GetInputState) 2 = ||
+	(L.L.IBIS_GetInputState) 3 = !
 	{if}
 		7 (M.L.IBIS_Keypad)
-		(L.L.IBIS_GetInputState) 1 = 
-		{if}
-			(L.$.IBIS_GetLinieInput) "7" $+ (S.$.IBIS_GetLinieInput)
-		{else}
-	 		(L.L.IBIS_GetInputState) 2 =
+	{endif}
+	(L.L.IBIS_GetInputState) 1 = 
+	{if}
+		(L.$.IBIS_GetLinieInput) "7" $+ (S.$.IBIS_GetLinieInput)
+	{else}
+	 	(L.L.IBIS_GetInputState) 2 =
 		{if}
 			(L.$.IBIS_GetRouteInput) "7" $+ (S.$.IBIS_GetRouteInput)
+		{else}
+			(L.L.IBIS_GetInputState) 3 =
+			{if}
+				(L.$.IBIS_GetDriverInput) "7" $+ (S.$.IBIS_GetDriverInput)
+			{endif}
 		{endif}
 	{endif}
-	{else}
-		(L.L.IBIS_GetInputState) 3 =
-		{if}
-			(T.L.ev_IBIS_piep)
-			(L.$.IBIS_GetDriverInput) "7" $+ (S.$.IBIS_GetDriverInput)
-		{endif}
-	{endif} 
 {end}
 
 {trigger:Numpad_8}
-	(L.L.IBIS_GetInputState) 1 = 
-	(L.L.IBIS_GetInputState) 2 = ||
+	(L.L.IBIS_GetInputState) 3 = !
 	{if}
 		8 (M.L.IBIS_Keypad)
-		(L.L.IBIS_GetInputState) 1 = 
-		{if}
-			(L.$.IBIS_GetLinieInput) "8" $+ (S.$.IBIS_GetLinieInput)
-		{else}
-	 		(L.L.IBIS_GetInputState) 2 =
+	{endif}
+	(L.L.IBIS_GetInputState) 1 = 
+	{if}
+		(L.$.IBIS_GetLinieInput) "8" $+ (S.$.IBIS_GetLinieInput)
+	{else}
+	 	(L.L.IBIS_GetInputState) 2 =
 		{if}
 			(L.$.IBIS_GetRouteInput) "8" $+ (S.$.IBIS_GetRouteInput)
+		{else}
+			(L.L.IBIS_GetInputState) 3 =
+			{if}
+				(L.$.IBIS_GetDriverInput) "8" $+ (S.$.IBIS_GetDriverInput)
+			{endif}
 		{endif}
 	{endif}
-	{else}
-		(L.L.IBIS_GetInputState) 3 =
-		{if}
-			(T.L.ev_IBIS_piep)
-			(L.$.IBIS_GetDriverInput) "8" $+ (S.$.IBIS_GetDriverInput)
-		{endif}
-	{endif} 
 {end}
 
 {trigger:Numpad_9}
-	(L.L.IBIS_GetInputState) 1 = 
-	(L.L.IBIS_GetInputState) 2 = ||
+	(L.L.IBIS_GetInputState) 3 = !
 	{if}
 		9 (M.L.IBIS_Keypad)
-		(L.L.IBIS_GetInputState) 1 = 
-		{if}
-			(L.$.IBIS_GetLinieInput) "9" $+ (S.$.IBIS_GetLinieInput)
-		{else}
-	 		(L.L.IBIS_GetInputState) 2 =
+	{endif}
+	(L.L.IBIS_GetInputState) 1 = 
+	{if}
+		(L.$.IBIS_GetLinieInput) "9" $+ (S.$.IBIS_GetLinieInput)
+	{else}
+	 	(L.L.IBIS_GetInputState) 2 =
 		{if}
 			(L.$.IBIS_GetRouteInput) "9" $+ (S.$.IBIS_GetRouteInput)
+		{else}
+			(L.L.IBIS_GetInputState) 3 =
+			{if}
+				(L.$.IBIS_GetDriverInput) "9" $+ (S.$.IBIS_GetDriverInput)
+			{endif}
 		{endif}
 	{endif}
-	{else}
-		(L.L.IBIS_GetInputState) 3 =
-		{if}
-			(T.L.ev_IBIS_piep)
-			(L.$.IBIS_GetDriverInput) "9" $+ (S.$.IBIS_GetDriverInput)
-		{endif}
-	{endif} 
 {end}
 
 {trigger:Numpad_0}
-	(L.L.IBIS_GetInputState) 1 = 
-	(L.L.IBIS_GetInputState) 2 = ||
+	(L.L.IBIS_GetInputState) 3 = !
 	{if}
 		0 (M.L.IBIS_Keypad)
-		(L.L.IBIS_GetInputState) 1 = 
-		{if}
-			(L.$.IBIS_GetLinieInput) "0" $+ (S.$.IBIS_GetLinieInput)
-		{else}
-	 		(L.L.IBIS_GetInputState) 2 =
+	{endif}
+	(L.L.IBIS_GetInputState) 1 = 
+	{if}
+		(L.$.IBIS_GetLinieInput) "0" $+ (S.$.IBIS_GetLinieInput)
+	{else}
+	 	(L.L.IBIS_GetInputState) 2 =
 		{if}
 			(L.$.IBIS_GetRouteInput) "0" $+ (S.$.IBIS_GetRouteInput)
+		{else}
+			(L.L.IBIS_GetInputState) 3 =
+			{if}
+				(L.$.IBIS_GetDriverInput) "0" $+ (S.$.IBIS_GetDriverInput)
+			{endif}
 		{endif}
 	{endif}
-	{else}
-		(L.L.IBIS_GetInputState) 3 =
-		{if}
-			(T.L.ev_IBIS_piep)
-			(L.$.IBIS_GetDriverInput) "0" $+ (S.$.IBIS_GetDriverInput)
-		{endif}
-	{endif} 
 {end}
 
 '----------------------
