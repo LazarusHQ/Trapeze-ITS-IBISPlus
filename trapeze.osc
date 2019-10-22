@@ -32,7 +32,8 @@
 	{endif}
 {end}
 
-{trigger:Numpad_Enter}
+
+{trigger:Numpad_enter}
 	(L.L.IBIS_GetInputState) 1 =
 	{if}
 		(T.L.ev_IBIS_piep)
@@ -42,15 +43,9 @@
 			(T.L.ev_IBIS_pieperror)
 		{endif}
 
-		l0 100 / trunc 
+		l0 100 / trunc (S.L.IBIS_LinieKurs)
+		l0 100 % (S.L.IBIS_Linie_Suffix)
 
-		(S.L.IBIS_LinieKurs)
-
-		l0 100 % 
-
-		(S.L.IBIS_Linie_Suffix)
-
-		(T.L.ev_IBIS_entwerter)
 		(M.L.IBIS_SetLinie)
 	{else}
 		(L.L.IBIS_GetInputState) 2 =
@@ -76,7 +71,7 @@
 					(T.L.ev_IBIS_pieperror)
 				{else}
 					(T.L.ev_IBIS_piep)
-					(M.L.IBIS_SetRoute)
+					(M.L.IBIS_setRoute)
 					(L.L.schedule_active)
 					{if}
 						(L.L.IBIS_Busstop_differenz)
@@ -87,27 +82,33 @@
 						{endif}
 					{endif}
 				{else}
-					0 (S.L.IBIS_busstop)
+					0 (S.L.IBIS_busstop)	
 				{endif}
-				(M.L.IBIS_RefreshBusstop)
+					(M.L.IBIS_RefreshBusstop)
 			{endif}
-		{endif}	
-		(L.L.IBIS_GetInputState) 4 =
-		{if}
-			0 (S.L.IBIS_GetInputState)
-			(T.L.ev_IBIS_piep)
 		{else}
-		(L.L.IBIS_GetInputState) 15 =
-		{if}
-			(L.L.IBIS_busstop) 1 + (S.L.IBIS_busstop)
-			(M.L.IBIS_RefreshBusstop)
-			(T.L.ev_IBIS_piep)
-			0 (S.L.IBIS_LCD-zeilentimer) (S.L.IBIS_LCD-zeile)
-			11 (S.L.IBIS_GetInputState)
-		{endif}
+			(L.L.IBIS_GetInputState) 3 =
+			{if}
+				(L.$.IBIS_GetDriverInput) $StrToFloat (C.L.fahrer) =
+				{if}
+					0 (S.L.IBIS_Anmeldung)
+					1 (S.L.IBIS_Fahrbetrieb)
+					(T.L.ev_IBIS_piep)
+				{else}
+					"" (S.$.IBIS_GetDriverInput)
+					(T.L.ev_IBIS_pieperror)
+				{endif}
+			{else}
+				(L.L.IBIS_GetInputState) 4 = 
+				{if}
+					0 (S.L.IBIS_GetInputState)
+					(T.L.ev_IBIS_piep)
+				{endif}
+			{endif}
 		{endif}
 	{endif}
 {end}
+
 
 {trigger:Numpad_1}
 	(L.L.IBIS_GetInputState) 3 = !
@@ -125,6 +126,7 @@
 			(L.L.IBIS_GetInputState) 3 =
 			{if}
 				(L.$.IBIS_GetDriverInput) "1" $+ (S.$.IBIS_GetDriverInput)
+				(T.L.ev_IBIS_piep)
 			{endif}
 		{endif}
 	{endif}
@@ -146,6 +148,7 @@
 			(L.L.IBIS_GetInputState) 3 =
 			{if}
 				(L.$.IBIS_GetDriverInput) "2" $+ (S.$.IBIS_GetDriverInput)
+				(T.L.ev_IBIS_piep)
 			{endif}
 		{endif}
 	{endif}
@@ -167,6 +170,7 @@
 			(L.L.IBIS_GetInputState) 3 =
 			{if}
 				(L.$.IBIS_GetDriverInput) "3" $+ (S.$.IBIS_GetDriverInput)
+				(T.L.ev_IBIS_piep)
 			{endif}
 		{endif}
 	{endif}
@@ -188,6 +192,7 @@
 			(L.L.IBIS_GetInputState) 3 =
 			{if}
 				(L.$.IBIS_GetDriverInput) "4" $+ (S.$.IBIS_GetDriverInput)
+				(T.L.ev_IBIS_piep)
 			{endif}
 		{endif}
 	{endif}
@@ -209,6 +214,7 @@
 			(L.L.IBIS_GetInputState) 3 =
 			{if}
 				(L.$.IBIS_GetDriverInput) "5" $+ (S.$.IBIS_GetDriverInput)
+				(T.L.ev_IBIS_piep)
 			{endif}
 		{endif}
 	{endif}
@@ -230,6 +236,7 @@
 			(L.L.IBIS_GetInputState) 3 =
 			{if}
 				(L.$.IBIS_GetDriverInput) "6" $+ (S.$.IBIS_GetDriverInput)
+				(T.L.ev_IBIS_piep)
 			{endif}
 		{endif}
 	{endif}
@@ -251,6 +258,7 @@
 			(L.L.IBIS_GetInputState) 3 =
 			{if}
 				(L.$.IBIS_GetDriverInput) "7" $+ (S.$.IBIS_GetDriverInput)
+				(T.L.ev_IBIS_piep)
 			{endif}
 		{endif}
 	{endif}
@@ -272,6 +280,7 @@
 			(L.L.IBIS_GetInputState) 3 =
 			{if}
 				(L.$.IBIS_GetDriverInput) "8" $+ (S.$.IBIS_GetDriverInput)
+				(T.L.ev_IBIS_piep)
 			{endif}
 		{endif}
 	{endif}
@@ -293,6 +302,7 @@
 			(L.L.IBIS_GetInputState) 3 =
 			{if}
 				(L.$.IBIS_GetDriverInput) "9" $+ (S.$.IBIS_GetDriverInput)
+				(T.L.ev_IBIS_piep)
 			{endif}
 		{endif}
 	{endif}
@@ -314,6 +324,7 @@
 			(L.L.IBIS_GetInputState) 3 =
 			{if}
 				(L.$.IBIS_GetDriverInput) "0" $+ (S.$.IBIS_GetDriverInput)
+				(T.L.ev_IBIS_piep)
 			{endif}
 		{endif}
 	{endif}
@@ -333,6 +344,17 @@
 '----------------------
 
 {macro:Trapeze_frame}
+
+	(L.L.elec_busbar_main) 
+	(L.L.IBIS_Fahrbetrieb) ! &&
+	{if}
+		1 (S.L.IBIS_Anmeldung)
+	{endif}
+
+	(L.L.IBIS_Fahrbetrieb) 1 = 
+	{if}
+		0 (S.L.IBIS_Anmeldung)
+	{endif}
 
 	(L.L.IBIS_GetInputState) 8 =
 	{if}
